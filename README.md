@@ -49,7 +49,7 @@ Run it on your own infrastructure. n8n continues to execute your workflows; Flow
 | **Track health** | Execution trends, success rates, workflow health, expected intervals, and connection health. |
 | **Work as a team** | Separate workspaces, role-based access, invitations, account sessions, and audit history. |
 
-Light and dark themes, small-screen layouts, keyboard navigation, and reduced motion are supported. Workflow grouping is deterministic; definitions are not sent to an AI service.
+Light and dark themes, small-screen layouts, keyboard navigation, and reduced motion are supported. Workflow stages are derived directly from the connected workflow's topology.
 
 ## Quick start
 
@@ -118,7 +118,7 @@ Cookie sessions, CSRF protection, workspace roles, encrypted integration credent
 
 The monitoring and incident-management MVP is implemented. Local verification includes **33 passing backend tests**, TypeScript checks, production Docker builds, real n8n 2.45.7 integration, SMTP capture, restart durability, and database backup/restore. The live n8n contract test is opt-in; standard CI skips it without a configured instance.
 
-Production hosting and real Telegram delivery have not been verified. Native retry/recovery, AI diagnosis, maintenance windows, SLA escalation policies, and additional providers remain future scope. Unsupported recovery actions stay disabled.
+Production hosting and real Telegram delivery have not been verified. Native retry/recovery, maintenance windows, SLA escalation policies, and additional providers remain future scope. Unsupported recovery actions stay disabled.
 
 Read the [release coverage](docs/release-status.md) for the verification record and remaining release work.
 

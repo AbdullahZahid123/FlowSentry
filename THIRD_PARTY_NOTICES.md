@@ -1,6 +1,6 @@
 # Third-party components
 
-The sidebar, button, input, separator, sheet, skeleton, tooltip, dialog, tabs, accordion, card, badge, table, alert, dropdown menu, and mobile hook in `frontend` are adapted from shadcn/ui, selected through its listing on 21st.dev.
+The sidebar, button, input, separator, sheet, skeleton, tooltip, dialog, tabs, accordion, card, badge, table, alert, dropdown menu, and mobile hook in `frontend` are adapted from shadcn/ui.
 
 Copyright (c) 2023 shadcn
 

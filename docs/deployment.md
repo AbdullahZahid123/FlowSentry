@@ -1,5 +1,18 @@
 # Deployment and operations
 
+## Published container images
+
+Download the installation archive from the GitHub release, extract it, and generate configuration once with `python scripts/configure.py`. Use both Compose files for image-based installs:
+
+```sh
+docker compose -f compose.yaml -f compose.release.yaml pull
+docker compose -f compose.yaml -f compose.release.yaml up -d --no-build
+```
+
+The release override selects `ghcr.io/abdullahzahid123/flowsentry-backend:v0.1.0` and `ghcr.io/abdullahzahid123/flowsentry-web:v0.1.0` for Linux AMD64/ARM64. Set `FLOWSENTRY_VERSION` to pin a different published tag. Keep using both files for subsequent operations; omit the override only when deliberately building from source. The backend image serves the API, migration, worker, and scheduler roles. Images carry source/revision labels and build provenance/SBOM attestations.
+
+Back up the database and encryption key before upgrading. Review the target release's migration notes before changing the version. The default local HTTP binding still requires HTTPS and secure-cookie configuration before network exposure.
+
 ## Services
 
 `docker compose up --build -d` runs PostgreSQL, a one-shot migration service, the API, a worker, a scheduler, and the web application. The web service is bound to `127.0.0.1:3100`; the API and database have no host port. PostgreSQL data lives in the `flowsentry_postgres-data` named volume. Do not use `docker compose down -v` on a deployment whose data you need.

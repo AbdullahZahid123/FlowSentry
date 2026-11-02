@@ -1,0 +1,13 @@
+# Use alongside compose.yaml. Pull images, then start with --no-build.
+# FLOWSENTRY_VERSION can pin another published release; defaults to v0.1.0.
+services:
+  migrate:
+    image: ghcr.io/abdullahzahid123/flowsentry-backend:${FLOWSENTRY_VERSION:-v0.1.0}
+  api:
+    image: ghcr.io/abdullahzahid123/flowsentry-backend:${FLOWSENTRY_VERSION:-v0.1.0}
+  worker:
+    image: ghcr.io/abdullahzahid123/flowsentry-backend:${FLOWSENTRY_VERSION:-v0.1.0}
+  scheduler:
+    image: ghcr.io/abdullahzahid123/flowsentry-backend:${FLOWSENTRY_VERSION:-v0.1.0}
+  web:
+    image: ghcr.io/abdullahzahid123/flowsentry-web:${FLOWSENTRY_VERSION:-v0.1.0}

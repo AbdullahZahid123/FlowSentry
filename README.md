@@ -12,6 +12,7 @@
 <p align="center">
   <a href="https://github.com/AbdullahZahid123/FlowSentry/actions/workflows/ci.yml"><img src="https://github.com/AbdullahZahid123/FlowSentry/actions/workflows/ci.yml/badge.svg" alt="Build and tests"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache_2.0-ff7966?style=flat-square&labelColor=202128" alt="Apache 2.0 license"></a>
+  <a href="https://github.com/AbdullahZahid123/FlowSentry/releases"><img src="https://img.shields.io/github/v/release/AbdullahZahid123/FlowSentry?style=flat-square&color=ff7966&labelColor=202128" alt="Latest release"></a>
   <a href="https://github.com/AbdullahZahid123/FlowSentry/stargazers"><img src="https://img.shields.io/github/stars/AbdullahZahid123/FlowSentry?style=flat-square&color=ff7966&labelColor=202128" alt="GitHub stars"></a>
   <img src="https://img.shields.io/badge/deployment-self--hosted-ff7966?style=flat-square&labelColor=202128" alt="Self-hosted">
 </p>
@@ -53,7 +54,18 @@ Light and dark themes, small-screen layouts, keyboard navigation, and reduced mo
 
 ## Quick start
 
-Requires **Docker with Compose** and **Python 3** for the one-time configuration generator.
+Requires **Docker with Compose v2** and **Python 3** for the one-time configuration generator. Published images support Linux AMD64 and ARM64.
+
+Download and extract the installation archive from the [latest release](https://github.com/AbdullahZahid123/FlowSentry/releases/latest), then run from the extracted directory:
+
+```sh
+python scripts/configure.py
+docker compose -f compose.yaml -f compose.release.yaml pull
+docker compose -f compose.yaml -f compose.release.yaml up -d --no-build
+```
+
+<details>
+<summary>Build from source instead</summary>
 
 ```sh
 git clone https://github.com/AbdullahZahid123/FlowSentry.git
@@ -61,6 +73,8 @@ cd FlowSentry
 python scripts/configure.py
 docker compose up --build -d
 ```
+
+</details>
 
 Open **[localhost:3100](http://localhost:3100)**, choose **Open app**, and create your first owner account. First-run setup closes after that account is created. There is no default password or seeded production activity.
 

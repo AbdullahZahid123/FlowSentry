@@ -1,0 +1,13 @@
+**/node_modules
+**/.next
+**/.next-dev
+**/__pycache__
+**/.pytest_cache
+**/*.pyc
+**/*.tsbuildinfo
+**/.env
+.env*
+.venv
+.local
+.freebuff
+.git

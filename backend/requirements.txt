@@ -1,0 +1,13 @@
+# FlowSentry backend (Python 3.12+; developed and verified on 3.15)
+fastapi>=0.162,<1.0
+uvicorn>=0.54
+sqlalchemy>=2.1,<3.0
+psycopg[binary]>=3.3
+pydantic>=2.14
+pydantic-settings>=2.16
+email-validator>=2.3
+argon2-cffi>=25.1
+httpx>=0.28
+python-dotenv>=1.2
+cryptography>=50.0
+alembic>=1.20,<2

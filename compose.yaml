@@ -1,0 +1,110 @@
+name: flowsentry
+x-backend: &backend
+  image: flowsentry-backend:local
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+  init: true
+  restart: unless-stopped
+  environment: &environment
+    APP_ENV: ${APP_ENV:-development}
+    DATABASE_URL: postgresql+psycopg://flowsentry:${DB_PASSWORD:?Run scripts/configure.py first}@postgres:5432/flowsentry
+    APP_SECRET_KEY: ${APP_SECRET_KEY:?Run scripts/configure.py first}
+    ENCRYPTION_KEY: ${ENCRYPTION_KEY:?Run scripts/configure.py first}
+    FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3100}
+    SESSION_COOKIE_SECURE: ${SESSION_COOKIE_SECURE:-false}
+    REGISTRATION_MODE: setup
+    WORKER_ENABLED: 'true'
+    WORKER_EMBEDDED: 'false'
+    ALLOW_PRIVATE_NETWORK: ${ALLOW_PRIVATE_NETWORK:-false}
+    POLL_PAGE_SIZE: ${POLL_PAGE_SIZE:-20}
+    SMTP_HOST: ${SMTP_HOST:-}
+    SMTP_PORT: ${SMTP_PORT:-587}
+    SMTP_USER: ${SMTP_USER:-}
+    SMTP_PASSWORD: ${SMTP_PASSWORD:-}
+    SMTP_FROM: ${SMTP_FROM:-flowsentry@localhost}
+    SMTP_USE_TLS: ${SMTP_USE_TLS:-true}
+    TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+  read_only: true
+  tmpfs: [/tmp]
+  networks: [internal, egress]
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: flowsentry
+      POSTGRES_USER: flowsentry
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Run scripts/configure.py first}
+    volumes: [postgres-data:/var/lib/postgresql/data]
+    networks: [internal]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U flowsentry -d flowsentry']
+      interval: 5s
+      timeout: 3s
+      retries: 15
+  migrate:
+    <<: *backend
+    restart: 'no'
+    command: [python, -m, app.cli, migrate]
+    depends_on:
+      postgres: {condition: service_healthy}
+  api:
+    <<: *backend
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  worker:
+    <<: *backend
+    command: [python, -m, app.cli, worker]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -m, app.cli, health, --role, worker]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+  scheduler:
+    <<: *backend
+    command: [python, -m, app.cli, scheduler]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -m, app.cli, health, --role, scheduler]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+  web:
+    image: flowsentry-web:local
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        FLOWSENTRY_API_URL: http://api:8000
+    restart: unless-stopped
+    init: true
+    ports: ['127.0.0.1:${WEB_PORT:-3100}:3000']
+    depends_on:
+      api: {condition: service_healthy}
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    networks: [egress]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres-data:
+networks:
+  internal:
+    internal: true
+  egress:
